@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kado Digital Spesial</title>
+    <style>
+        /* CSS & Styling - Dibuat menyerupai ukuran mobile */
+        :root {
+            --bg-color: #f4f0ef;
+            --text-dark: #2c3e50;
+            --accent-blue: #7ba4c7;
+            --accent-pink: #d99eb2;
+            --font-main: 'Georgia', serif;
+            --font-sans: 'Arial', sans-serif;
+            --bg-dark: #12151f; /* Warna untuk Dark Mode */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: var(--font-sans);
+        }
+
+        /* Container menyerupai layar HP */
+        .mobile-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 800px;
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background-image: radial-gradient(circle, #fff, #e8eff5); 
+            transition: background-color 1s ease, background-image 1s ease; /* Transisi halus ke dark mode */
+        }
+
+        /* =========================================
+           FITUR 2: DARK MODE & GLASSMORPHISM
+           ========================================= */
+        .mobile-container.dark-mode {
+            background-image: none;
+            background-color: var(--bg-dark);
+        }
+
+        .dark-mode-text {
+            color: #ffffff !important;
+        }
+
+        .dark-mode-text-muted {
+            color: #a0aab5 !important;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+            color: white;
+            transition: all 1s ease;
+        }
+
+        /* Screen States */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        /* Teks Styling */
+        h1, h2 {
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Elemen Interaktif */
+        input[type="text"] {
+            padding: 15px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+
+        button {
+            padding: 15px 30px;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            width: 80%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Card / Envelope Design */
+        .card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+        }
+
+        .wax-seal {
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-pink);
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .wax-seal:hover {
+            transform: scale(1.1);
+        }
+
+        /* =========================================
+           FITUR 3: TOMBOL LARI KABUR
+           ========================================= */
+        #btnKabur {
+            transition: top 0.3s ease, left 0.3s ease, background-color 0.3s ease;
+            z-index: 100;
+        }
+
+        /* Animasi Kustom */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Error Message */
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            display: none;
+        }
+    </style>
+    <!-- Library Canvas Confetti untuk partikel pesta -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+    <source src="musik.mp3" type="audio/mpeg">
+</audio>
+
+<!-- FITUR 1: AUDIO JUMPSCARE / SOUND LUCU -->
+<!-- Pastikan file savage.mp3 (atau ganti namanya bebas) ada di folder yang sama -->
+<audio id="sfxSah">
+    <source src="savage.mp3" type="audio/mpeg">
+</audio>
+
+<div class="mobile-container" id="mainContainer">
+    
+    <div id="screen-1" class="screen active">
+        <div class="card floating">
+            <h2>ETSS JAWAB DULU</h2>
+            <p>Hewan yang paling lucu?</p>
+            <input type="text" id="jawabanGembok" placeholder="Ketik jawabanmu...">
+            <p id="errorMsg" class="error">Salah! Coba lagi ya.</p>
+            <button onclick="cekJawaban()">Buka kado</button>
+        </div>
+    </div>
+
+    <div id="screen-2" class="screen">
+        <h1 style="font-style: italic;">Eh, aku mau ngomong sesuatu</h1>
+        <p>Tapi ini rahasia cuma kita berdua!</p>
+        <div class="card" style="margin-top: 30px;">
+            <p>Tap sealnya. Surat kecilnya bakal kebuka sendiri.</p>
+            <div class="wax-seal" onclick="bukaAmplop()">TAP</div>
+        </div>
+    </div>
+
+    <div id="screen-3" class="screen">
+        <div class="card">
+            <p style="font-style: italic; color: #888;">bisik-bisik 1/2</p>
+            <h2>Sebenernya...</h2>
+            <button onclick="pindahLayar('screen-4')">Lanjut, aku siap</button>
+        </div>
+    </div>
+
+    <div id="screen-4" class="screen">
+        <div class="card">
+            <p style="font-style: italic; color: #888;">bisik-bisik 2/2</p>
+            <h2>Btw kamu gorila jenis apa sih? 🙄</h2>
+            <button onclick="pindahLayar('screen-5')">Buka suratnya</button>
+        </div>
+    </div>
+
+    <div id="screen-5" class="screen">
+        <div class="card" style="background: repeating-linear-gradient(#fff, #fff 29px, #e5e5e5 30px); padding-top: 40px;">
+            <h3 style="margin-top: -20px; font-style: italic; color: #888; font-size: 14px;">dari Haru</h3>
+            <h1 style="font-size: 22px;">Ada surat khusus kamu!</h1>
+            <p style="font-family: var(--font-main); font-style: italic;">
+                Kenapa why selalu always karena because selalu never!! btw pinjem duit seratus😞🙌
+            </p>
+            <button onclick="pindahLayar('screen-6')" style="margin-top: 30px;">Oke, lanjut</button>
+        </div>
+    </div>
+
+    <div id="screen-6" class="screen">
+        <div class="card">
+            <p style="font-style: italic; color: #888;">mini mission buat Rara</p>
+            <h1>Kamu jahat ya?</h1>
+            <div style="display: flex; gap: 10px; margin-top: 20px; position: relative;">
+                <button onclick="pindahLayar('screen-7')" style="width: 50%; background-color: var(--accent-blue);">Iya</button>
+                <button id="btnKabur" style="width: 50%; background-color: #ddd; color: #333;">Mikir dulu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-7" class="screen">
+        <!-- Kartu disini akan otomatis berubah jadi Glassmorphism karena script -->
+        <div class="card" id="sertifikatCard">
+            <p id="teksScan" style="font-style: italic; color: #888; margin: 0;">hasil scan: valid</p>
+            <h1 id="teksJudul" style="font-size: 24px; margin-top: 10px;">Haru dan si gorila Rara</h1>
+            <p id="teksDeskripsi" style="font-family: var(--font-main); font-style: italic; font-size: 14px;">
+                Dengan ini resmi saya nyatakan rara adalah gorila yang paling sigma di seluruh kutub utara bagian ngawi.
+            </p>
+            <!-- Tombol SAH sekarang bisa diklik dan akan mengeluarkan efek partikel & suara -->
+            <div class="wax-seal" style="width: 60px; height: 60px; cursor: pointer;" onclick="rayakanSah()">SAH</div>
+            <p id="teksFootnote" style="font-size: 12px; color: #888;">Screenshot ini, terus kirim ke Haru.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- LOGIKA JAVASCRIPT ---
+
+    const musik = document.getElementById("bgMusic");
+    let musikMain = false;
+
+    // Fungsi untuk memutar musik pada interaksi pertama
+    function playMusic() {
+        if (!musikMain) {
+            musik.play().catch(error => console.log("Browser block autoplay"));
+            musikMain = true;
+        }
+    }
+
+    // Fungsi Gembok Rahasia
+    function cekJawaban() {
+        playMusic(); // Putar musik saat klik tombol
+        const input = document.getElementById("jawabanGembok").value.toLowerCase();
+        const errorMsg = document.getElementById("errorMsg");
+        
+        // Cek jawaban
+        if (input.includes("goril") || input.includes("gorik")) {
+            errorMsg.style.display = "none";
+            pindahLayar('screen-2');
+        } else {
+            errorMsg.style.display = "block";
+        }
+    }
+
+    // Fungsi transisi layar (SUDAH DIUPGRADE UNTUK FITUR 2: DARK MODE)
+    function pindahLayar(targetScreenId) {
+        // Hilangkan semua layar
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(screen => {
+            screen.classList.remove('active');
+        });
+
+        // Tampilkan layar target
+        const target = document.getElementById(targetScreenId);
+        target.classList.add('active');
+
+        // Logika khusus jika masuk ke Layar 7 (Sertifikat)
+        if(targetScreenId === 'screen-7') {
+            const container = document.getElementById('mainContainer');
+            const card = document.getElementById('sertifikatCard');
+            
+            // Aktifkan Dark Mode & Glassmorphism
+            container.classList.add('dark-mode');
+            card.classList.add('glass-card');
+
+            // Ubah teks jadi putih biar kebaca di atas Glassmorphism
+            document.getElementById('teksJudul').classList.add('dark-mode-text');
+            document.getElementById('teksDeskripsi').classList.add('dark-mode-text');
+            document.getElementById('teksScan').classList.add('dark-mode-text-muted');
+            document.getElementById('teksFootnote').classList.add('dark-mode-text-muted');
+        }
+    }
+
+    // Fungsi saat seal/stempel diklik
+    function bukaAmplop() {
+        playMusic();
+        pindahLayar('screen-3');
+    }
+
+    // ==============================================================
+    // FITUR 3: TOMBOL MIKIR DULU YANG KABUR
+    // ==============================================================
+    const btnKabur = document.getElementById("btnKabur");
+    const container = document.getElementById("mainContainer");
+    const tulisanLucu = ["Eh copot!", "Gak kena!", "Wleee 😛", "Sini kalo bisa!", "Mikir apa sih?"];
+    let kaburCount = 0;
+
+    function tombolLari(e) {
+        if(e) e.preventDefault(); // Mencegah klik paksa di HP
+        
+        // Ubah Teks
+        if (kaburCount < tulisanLucu.length) {
+            btnKabur.innerText = tulisanLucu[kaburCount];
+            kaburCount++;
+        } else {
+            btnKabur.innerText = "Capek woy! 🥵";
+            kaburCount = 0; // Reset text
+        }
+
+        // Ubah tombol jadi absolute supaya bisa terbang ke mana-mana
+        btnKabur.style.position = "absolute";
+        btnKabur.style.width = "auto";
+        btnKabur.style.padding = "15px 20px";
+        btnKabur.style.backgroundColor = "#ff4757"; // Warnanya jadi merah ngeledek
+        btnKabur.style.color = "white";
+
+        // Kalkulasi posisi acak (tetap di dalam layar HP)
+        const maxX = container.clientWidth - btnKabur.clientWidth - 20;
+        const maxY = container.clientHeight - btnKabur.clientHeight - 40;
+        
+        const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+        const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+        btnKabur.style.left = randomX + "px";
+        btnKabur.style.top = randomY + "px";
+    }
+
+    // Pemicu saat kursor mendekat (Desktop) atau saat disentuh (HP)
+    btnKabur.addEventListener("mouseover", tombolLari);
+    btnKabur.addEventListener("touchstart", tombolLari);
+    // ==============================================================
+
+    // ==============================================================
+    // FITUR 1 & PARTIKEL: FUNGSI SAH
+    // ==============================================================
+    function rayakanSah() {
+        // Putar suara jumpscare lucu (Misal: suara "Savage")
+        const sfx = document.getElementById("sfxSah");
+        if(sfx) {
+            sfx.currentTime = 0;
+            sfx.play().catch(e => console.log("Audio play error", e));
+        }
+
+        // Tembakan partikel utama
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+
+        // Tembakan susulan biar lebih ramai
+        setTimeout(() => {
+            confetti({
+                particleCount: 80,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: ['#7ba4c7', '#d99eb2', '#ffffff'] // Warna disesuaikan dengan tema
+            });
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
