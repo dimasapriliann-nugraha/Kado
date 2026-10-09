@@ -13,7 +13,7 @@
             --accent-pink: #d99eb2;
             --font-main: 'Georgia', serif;
             --font-sans: 'Arial', sans-serif;
-            --bg-dark: #12151f; /* Warna untuk Dark Mode */
+            --bg-dark: #12151f;
         }
 
         body {
@@ -27,7 +27,6 @@
             font-family: var(--font-sans);
         }
 
-        /* Container menyerupai layar HP */
         .mobile-container {
             width: 100%;
             max-width: 400px;
@@ -38,12 +37,10 @@
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             background-image: radial-gradient(circle, #fff, #e8eff5); 
-            transition: background-color 1s ease, background-image 1s ease; /* Transisi halus ke dark mode */
+            transition: background-color 1s ease, background-image 1s ease;
         }
 
-        /* =========================================
-           FITUR 2: DARK MODE & GLASSMORPHISM
-           ========================================= */
+        /* Dark Mode & Glassmorphism */
         .mobile-container.dark-mode {
             background-image: none;
             background-color: var(--bg-dark);
@@ -93,7 +90,6 @@
             z-index: 10;
         }
 
-        /* Teks Styling */
         h1, h2 {
             font-family: var(--font-main);
             color: var(--text-dark);
@@ -105,7 +101,6 @@
             line-height: 1.5;
         }
 
-        /* Elemen Interaktif */
         input[type="text"] {
             padding: 15px;
             width: 80%;
@@ -135,7 +130,6 @@
             transform: scale(0.95);
         }
 
-        /* Card / Envelope Design */
         .card {
             background: white;
             padding: 30px 20px;
@@ -146,9 +140,110 @@
             border: 1px solid transparent;
         }
 
+        /* =========================================
+           FITUR BARU: ANIMASI AMPLOP 3D (CSS)
+           ========================================= */
+        .envelope-wrapper {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            margin: 20px auto;
+            perspective: 1000px;
+        }
+        .envelope-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #e6dfdf;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform-style: preserve-3d;
+        }
+        .env-flap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        .env-top {
+            clip-path: polygon(0 0, 50% 50%, 100% 0);
+            background: #f0e9e9;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            z-index: 4;
+        }
+        .env-bottom {
+            clip-path: polygon(0 100%, 50% 50%, 100% 100%);
+            background: #dfd8d8;
+            z-index: 3;
+        }
+        .env-left {
+            clip-path: polygon(0 0, 50% 50%, 0 100%);
+            background: #e8e3e3;
+            z-index: 2;
+        }
+        .env-right {
+            clip-path: polygon(100% 0, 50% 50%, 100% 100%);
+            background: #e8e3e3;
+            z-index: 2;
+        }
+        .env-letter {
+            position: absolute;
+            width: 86%;
+            height: 86%;
+            background: white;
+            top: 7%;
+            left: 7%;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1;
+            transition: transform 0.8s ease-in-out 0.4s; /* Jeda biar flap buka duluan */
+        }
+        .env-wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background-color: var(--accent-pink);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.3);
+            z-index: 5;
+            transition: transform 0.3s, opacity 0.3s ease;
+        }
+        .env-wax-seal:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        /* Saat amplop terbuka */
+        .envelope-wrapper.open .env-top {
+            transform: rotateX(180deg);
+        }
+        .envelope-wrapper.open .env-letter {
+            transform: translateY(-90px);
+            z-index: 6; /* Surat naik ke atas lipatan */
+        }
+        .envelope-wrapper.open .env-wax-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Tombol Wax Seal Biasa (Untuk Layar 7) */
         .wax-seal {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background-color: var(--accent-pink);
             border-radius: 50%;
             margin: 20px auto;
@@ -161,20 +256,15 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
             transition: transform 0.3s;
         }
-
         .wax-seal:hover {
             transform: scale(1.1);
         }
 
-        /* =========================================
-           FITUR 3: TOMBOL LARI KABUR
-           ========================================= */
         #btnKabur {
             transition: top 0.3s ease, left 0.3s ease, background-color 0.3s ease;
             z-index: 100;
         }
 
-        /* Animasi Kustom */
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -185,16 +275,56 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        /* Error Message */
         .error {
             color: red;
             font-size: 14px;
             margin-top: -10px;
             display: none;
         }
+
+        /* Scanner */
+        .scanner-box {
+            width: 120px;
+            height: 160px;
+            margin: 20px auto;
+            border: 2px dashed #bbb;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+        .fingerprint-emoji {
+            font-size: 60px;
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+        }
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #00ff88;
+            box-shadow: 0 0 15px #00ff88, 0 0 5px #00ff88;
+            display: none;
+            animation: scanAnim 1.2s infinite alternate ease-in-out;
+        }
+        @keyframes scanAnim {
+            0% { top: 0; }
+            100% { top: calc(100% - 4px); }
+        }
     </style>
-    <!-- Library Canvas Confetti untuk partikel pesta -->
+    <!-- Library Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <!-- Library Three.js untuk Kado 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -202,8 +332,6 @@
     <source src="musik.mp3" type="audio/mpeg">
 </audio>
 
-<!-- FITUR 1: AUDIO JUMPSCARE / SOUND LUCU -->
-<!-- Pastikan file savage.mp3 (atau ganti namanya bebas) ada di folder yang sama -->
 <audio id="sfxSah">
     <source src="savage.mp3" type="audio/mpeg">
 </audio>
@@ -213,6 +341,11 @@
     <div id="screen-1" class="screen active">
         <div class="card floating">
             <h2>ETSS JAWAB DULU</h2>
+            
+            <!-- Tempat Kado 3D Three.js -->
+            <div id="three-canvas" style="width: 100%; height: 180px; touch-action: none; cursor: grab; margin: 0 auto;"></div>
+            <p style="font-size: 11px; color: #888; margin-top: -10px;">*Bisa diputar pakai jari/mouse</p>
+
             <p>Hewan yang paling lucu?</p>
             <input type="text" id="jawabanGembok" placeholder="Ketik jawabanmu...">
             <p id="errorMsg" class="error">Salah! Coba lagi ya.</p>
@@ -223,9 +356,19 @@
     <div id="screen-2" class="screen">
         <h1 style="font-style: italic;">Eh, aku mau ngomong sesuatu</h1>
         <p>Tapi ini rahasia cuma kita berdua!</p>
-        <div class="card" style="margin-top: 30px;">
-            <p>Tap sealnya. Surat kecilnya bakal kebuka sendiri.</p>
-            <div class="wax-seal" onclick="bukaAmplop()">TAP</div>
+        
+        <!-- Animasi Amplop 3D -->
+        <div class="envelope-wrapper" id="animasiAmplop">
+            <div class="envelope-3d">
+                <div class="env-flap env-top"></div>
+                <div class="env-flap env-right"></div>
+                <div class="env-flap env-bottom"></div>
+                <div class="env-flap env-left"></div>
+                <div class="env-letter">
+                    <p style="font-size: 12px; color: #555;">Ada surat nih...</p>
+                </div>
+                <div class="env-wax-seal" onclick="bukaAmplop()">TAP</div>
+            </div>
         </div>
     </div>
 
@@ -250,7 +393,7 @@
             <h3 style="margin-top: -20px; font-style: italic; color: #888; font-size: 14px;">dari Haru</h3>
             <h1 style="font-size: 22px;">Ada surat khusus kamu!</h1>
             <p style="font-family: var(--font-main); font-style: italic;">
-                Kenapa why selalu always karena because selalu never!! btw pinjem duit seratus😞🙌
+                Sebenernya aku bingung antara suka atau duka hemmm btw pinjem duit seratus😞🙌
             </p>
             <button onclick="pindahLayar('screen-6')" style="margin-top: 30px;">Oke, lanjut</button>
         </div>
@@ -261,22 +404,32 @@
             <p style="font-style: italic; color: #888;">mini mission buat Rara</p>
             <h1>Kamu jahat ya?</h1>
             <div style="display: flex; gap: 10px; margin-top: 20px; position: relative;">
-                <button onclick="pindahLayar('screen-7')" style="width: 50%; background-color: var(--accent-blue);">Iya</button>
+                <button onclick="pindahLayar('screen-scan')" style="width: 50%; background-color: var(--accent-blue);">Iya</button>
                 <button id="btnKabur" style="width: 50%; background-color: #ddd; color: #333;">Mikir dulu</button>
             </div>
         </div>
     </div>
 
+    <div id="screen-scan" class="screen">
+        <div class="card">
+            <p style="font-style: italic; color: #888; margin-bottom: 5px;">Sistem Keamanan Aktif</p>
+            <h2 style="margin-top: 0;">Verifikasi Identitas</h2>
+            <p id="teksScanner" style="font-size: 14px;">Tekan dan tahan area di bawah ini untuk memulai scan DNA.</p>
+            <div class="scanner-box" id="areaScan" onpointerdown="mulaiScan(event)">
+                <div class="fingerprint-emoji" id="iconJari">👆</div>
+                <div class="scanner-line" id="garisScan"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="screen-7" class="screen">
-        <!-- Kartu disini akan otomatis berubah jadi Glassmorphism karena script -->
         <div class="card" id="sertifikatCard">
             <p id="teksScan" style="font-style: italic; color: #888; margin: 0;">hasil scan: valid</p>
             <h1 id="teksJudul" style="font-size: 24px; margin-top: 10px;">Haru dan si gorila Rara</h1>
             <p id="teksDeskripsi" style="font-family: var(--font-main); font-style: italic; font-size: 14px;">
-                Dengan ini resmi saya nyatakan rara adalah gorila yang paling sigma di seluruh kutub utara bagian ngawi.
+                Dengan ini resmi saya nyatakan rara adalah gorila yang paling sigma, Awokawok😹.
             </p>
-            <!-- Tombol SAH sekarang bisa diklik dan akan mengeluarkan efek partikel & suara -->
-            <div class="wax-seal" style="width: 60px; height: 60px; cursor: pointer;" onclick="rayakanSah()">SAH</div>
+            <div class="wax-seal" onclick="rayakanSah()">SAH</div>
             <p id="teksFootnote" style="font-size: 12px; color: #888;">Screenshot ini, terus kirim ke Haru.</p>
         </div>
     </div>
@@ -284,12 +437,94 @@
 </div>
 
 <script>
-    // --- LOGIKA JAVASCRIPT ---
+    // ==============================================================
+    // INIT THREE.JS (KADO 3D)
+    // ==============================================================
+    let scene, camera, renderer, cubeGroup;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    function initThreeJS() {
+        const container = document.getElementById('three-canvas');
+        if (!container) return;
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        
+        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // Bikin Grup Kado (Kotak + Pita)
+        cubeGroup = new THREE.Group();
+
+        // Material & Geometri Kotak Utama
+        const boxGeo = new THREE.BoxGeometry(2, 2, 2);
+        const boxMat = new THREE.MeshPhongMaterial({ color: 0x7ba4c7 }); // Biru
+        const mainBox = new THREE.Mesh(boxGeo, boxMat);
+        cubeGroup.add(mainBox);
+
+        // Pita vertikal
+        const ribbonGeo1 = new THREE.BoxGeometry(2.1, 0.2, 2.1);
+        const ribbonMat = new THREE.MeshPhongMaterial({ color: 0xd99eb2 }); // Pink
+        const ribbon1 = new THREE.Mesh(ribbonGeo1, ribbonMat);
+        cubeGroup.add(ribbon1);
+
+        // Pita horizontal
+        const ribbonGeo2 = new THREE.BoxGeometry(0.2, 2.1, 2.1);
+        const ribbon2 = new THREE.Mesh(ribbonGeo2, ribbonMat);
+        cubeGroup.add(ribbon2);
+
+        scene.add(cubeGroup);
+
+        // Pencahayaan biar kelihatan 3D
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5).normalize();
+        scene.add(light);
+        
+        const ambientLight = new THREE.AmbientLight(0x606060);
+        scene.add(ambientLight);
+
+        camera.position.z = 3.5;
+
+        // Event Listeners buat muter kado pakai jari/mouse
+        container.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.offsetX, y: e.offsetY };
+        });
+        document.addEventListener('pointerup', () => { isDragging = false; });
+        container.addEventListener('pointermove', (e) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+                cubeGroup.rotation.y += deltaMove.x * 0.01;
+                cubeGroup.rotation.x += deltaMove.y * 0.01;
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            }
+        });
+
+        animateThreeJS();
+    }
+
+    function animateThreeJS() {
+        requestAnimationFrame(animateThreeJS);
+        if (cubeGroup && !isDragging) {
+            // Muter pelan otomatis kalau gak dipegang
+            cubeGroup.rotation.x += 0.005;
+            cubeGroup.rotation.y += 0.01;
+        }
+        renderer.render(scene, camera);
+    }
+
+    // Jalankan Three.js pas halaman ke-load
+    window.addEventListener('load', initThreeJS);
+    // ==============================================================
 
     const musik = document.getElementById("bgMusic");
     let musikMain = false;
 
-    // Fungsi untuk memutar musik pada interaksi pertama
     function playMusic() {
         if (!musikMain) {
             musik.play().catch(error => console.log("Browser block autoplay"));
@@ -297,13 +532,11 @@
         }
     }
 
-    // Fungsi Gembok Rahasia
     function cekJawaban() {
-        playMusic(); // Putar musik saat klik tombol
+        playMusic();
         const input = document.getElementById("jawabanGembok").value.toLowerCase();
         const errorMsg = document.getElementById("errorMsg");
         
-        // Cek jawaban
         if (input.includes("goril") || input.includes("gorik")) {
             errorMsg.style.display = "none";
             pindahLayar('screen-2');
@@ -312,28 +545,23 @@
         }
     }
 
-    // Fungsi transisi layar (SUDAH DIUPGRADE UNTUK FITUR 2: DARK MODE)
     function pindahLayar(targetScreenId) {
-        // Hilangkan semua layar
         const screens = document.querySelectorAll('.screen');
         screens.forEach(screen => {
             screen.classList.remove('active');
         });
 
-        // Tampilkan layar target
         const target = document.getElementById(targetScreenId);
         target.classList.add('active');
 
-        // Logika khusus jika masuk ke Layar 7 (Sertifikat)
+        // Dark Mode Logic untuk Sertifikat
         if(targetScreenId === 'screen-7') {
             const container = document.getElementById('mainContainer');
             const card = document.getElementById('sertifikatCard');
             
-            // Aktifkan Dark Mode & Glassmorphism
             container.classList.add('dark-mode');
             card.classList.add('glass-card');
 
-            // Ubah teks jadi putih biar kebaca di atas Glassmorphism
             document.getElementById('teksJudul').classList.add('dark-mode-text');
             document.getElementById('teksDeskripsi').classList.add('dark-mode-text');
             document.getElementById('teksScan').classList.add('dark-mode-text-muted');
@@ -341,40 +569,41 @@
         }
     }
 
-    // Fungsi saat seal/stempel diklik
+    // FUNGSI BUKA AMPLOP 3D (Animasi CSS)
     function bukaAmplop() {
         playMusic();
-        pindahLayar('screen-3');
+        const amplop = document.getElementById('animasiAmplop');
+        amplop.classList.add('open'); // Memicu animasi CSS rotateX dan naik
+        
+        // Kasih jeda waktu 1.5 detik biar animasinya kelar, baru pindah layar
+        setTimeout(() => {
+            pindahLayar('screen-3');
+        }, 1500); 
     }
 
-    // ==============================================================
-    // FITUR 3: TOMBOL MIKIR DULU YANG KABUR
-    // ==============================================================
+    // --- FITUR TOMBOL KABUR ---
     const btnKabur = document.getElementById("btnKabur");
     const container = document.getElementById("mainContainer");
     const tulisanLucu = ["Eh copot!", "Gak kena!", "Wleee 😛", "Sini kalo bisa!", "Mikir apa sih?"];
     let kaburCount = 0;
 
     function tombolLari(e) {
-        if(e) e.preventDefault(); // Mencegah klik paksa di HP
+        if(e) e.preventDefault(); 
         
-        // Ubah Teks
         if (kaburCount < tulisanLucu.length) {
             btnKabur.innerText = tulisanLucu[kaburCount];
             kaburCount++;
         } else {
             btnKabur.innerText = "Capek woy! 🥵";
-            kaburCount = 0; // Reset text
+            kaburCount = 0; 
         }
 
-        // Ubah tombol jadi absolute supaya bisa terbang ke mana-mana
         btnKabur.style.position = "absolute";
         btnKabur.style.width = "auto";
         btnKabur.style.padding = "15px 20px";
-        btnKabur.style.backgroundColor = "#ff4757"; // Warnanya jadi merah ngeledek
+        btnKabur.style.backgroundColor = "#ff4757"; 
         btnKabur.style.color = "white";
 
-        // Kalkulasi posisi acak (tetap di dalam layar HP)
         const maxX = container.clientWidth - btnKabur.clientWidth - 20;
         const maxY = container.clientHeight - btnKabur.clientHeight - 40;
         
@@ -385,36 +614,70 @@
         btnKabur.style.top = randomY + "px";
     }
 
-    // Pemicu saat kursor mendekat (Desktop) atau saat disentuh (HP)
     btnKabur.addEventListener("mouseover", tombolLari);
     btnKabur.addEventListener("touchstart", tombolLari);
-    // ==============================================================
 
-    // ==============================================================
-    // FITUR 1 & PARTIKEL: FUNGSI SAH
-    // ==============================================================
+    // --- FITUR SCANNER ---
+    let lagiScan = false;
+    function mulaiScan(e) {
+        if(e) e.preventDefault();
+        if(lagiScan) return;
+        lagiScan = true;
+
+        const area = document.getElementById('areaScan');
+        const teks = document.getElementById('teksScanner');
+        const garis = document.getElementById('garisScan');
+        const icon = document.getElementById('iconJari');
+
+        area.style.borderColor = "#00ff88";
+        area.style.boxShadow = "0 0 20px rgba(0, 255, 136, 0.4)";
+        area.style.backgroundColor = "#e0fbee";
+        icon.style.opacity = "0.1";
+        garis.style.display = "block"; 
+        
+        teks.innerText = "Menganalisis DNA Gorila... 🧬";
+        
+        setTimeout(() => {
+            teks.innerText = "Sandi genetik ditemukan, memproses... 🦍";
+        }, 1500);
+
+        setTimeout(() => {
+            teks.innerText = "100% Cocok! Mengalihkan...";
+            teks.style.color = "#00b894";
+            teks.style.fontWeight = "bold";
+            
+            garis.style.display = "none";
+            area.style.borderColor = "#00b894";
+            area.style.boxShadow = "none";
+            
+            setTimeout(() => {
+                pindahLayar('screen-7');
+                lagiScan = false; 
+            }, 1200);
+            
+        }, 3500);
+    }
+
+    // --- FITUR AUDIO & CONFETTI (SAH) ---
     function rayakanSah() {
-        // Putar suara jumpscare lucu (Misal: suara "Savage")
         const sfx = document.getElementById("sfxSah");
         if(sfx) {
             sfx.currentTime = 0;
             sfx.play().catch(e => console.log("Audio play error", e));
         }
 
-        // Tembakan partikel utama
         confetti({
             particleCount: 150,
             spread: 70,
             origin: { y: 0.6 }
         });
 
-        // Tembakan susulan biar lebih ramai
         setTimeout(() => {
             confetti({
                 particleCount: 80,
                 spread: 100,
                 origin: { y: 0.5 },
-                colors: ['#7ba4c7', '#d99eb2', '#ffffff'] // Warna disesuaikan dengan tema
+                colors: ['#7ba4c7', '#d99eb2', '#ffffff'] 
             });
         }, 300);
     }
